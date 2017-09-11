@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{125A39E2-BC3E-4E56-9319-E61320237EC8}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Openssl\openssl\bin\rsa_private_key.pem = C:\Openssl\openssl\bin\rsa_private_key.pem
+		C:\Openssl\openssl\bin\rsa_private_key_pkcs8.pem = C:\Openssl\openssl\bin\rsa_private_key_pkcs8.pem
+		C:\Openssl\openssl\bin\rsa_public_key.pem = C:\Openssl\openssl\bin\rsa_public_key.pem
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZZX", "src\ZZX\ZZX.csproj", "{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B311252F-36E9-479F-9445-6C5A252611E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZZXTest", "test\ZZXTest\ZZXTest.csproj", "{6FAD6596-88BF-453F-B4E5-3932F8526463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet", "src\DotNet\DotNet.csproj", "{BB213FF5-A88F-4765-998E-F76C0E6BCE38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FAD6596-88BF-453F-B4E5-3932F8526463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FAD6596-88BF-453F-B4E5-3932F8526463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FAD6596-88BF-453F-B4E5-3932F8526463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FAD6596-88BF-453F-B4E5-3932F8526463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB213FF5-A88F-4765-998E-F76C0E6BCE38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB213FF5-A88F-4765-998E-F76C0E6BCE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB213FF5-A88F-4765-998E-F76C0E6BCE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB213FF5-A88F-4765-998E-F76C0E6BCE38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{55BC90F5-F0AA-40C9-8AC4-3D9AF8A2734C} = {125A39E2-BC3E-4E56-9319-E61320237EC8}
+		{6FAD6596-88BF-453F-B4E5-3932F8526463} = {B311252F-36E9-479F-9445-6C5A252611E3}
+		{BB213FF5-A88F-4765-998E-F76C0E6BCE38} = {125A39E2-BC3E-4E56-9319-E61320237EC8}
+	EndGlobalSection
+EndGlobal
