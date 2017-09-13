@@ -134,8 +134,8 @@
     <Compile Include="Parser\ZZXAttribute.cs" />
     <Compile Include="Parser\ZZXJsonParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request\LoanApplyRequest.cs" />
-    <Compile Include="Response\LoanApplyResponse.cs" />
+    <Compile Include="Request\ZZXApiRequest.cs" />
+    <Compile Include="Response\ZZXApiResponse.cs" />
     <Compile Include="SignItem.cs" />
     <Compile Include="Util\FileItem.cs" />
     <Compile Include="Util\RSAUtil.cs" />
@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="public.key" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

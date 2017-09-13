@@ -54,7 +54,7 @@ namespace ZZX
             set { _version = value; }
         }
 
-        public ZZXClient(string serverUrl, string channelId, string method,string privateKey, string publicKey)
+        public ZZXClient(string serverUrl, string channelId,string privateKey, string publicKey)
         {
             _serverUrl = serverUrl;
             _privateKey = privateKey;
@@ -63,7 +63,7 @@ namespace ZZX
             _webUtils = new WebUtils();
         }
 
-        public ZZXClient(string serverUrl, string channelId, string method,string privateKey, string publicKey, string charset)
+        public ZZXClient(string serverUrl, string channelId,string privateKey, string publicKey, string charset)
         {
             _serverUrl = serverUrl;
             _privateKey = privateKey;
@@ -98,11 +98,11 @@ namespace ZZX
             }
             else
             {
-                //body = webUtils.DoPost(serverUrl, sysParams, charset);
-                body = "LA";
+                body = _webUtils.DoPost(_serverUrl, sysParams,_charset);
             }
 
-            string bizResponse = RSAUtil.ParseBizResponse(body, _privateKey, _charset);
+            //string bizResponse = RSAUtil.ParseBizResponse(body, _privateKey, _charset);
+            string bizResponse = body;
             T rsp = null;
             IZZXParser<T> parser = null;
 
@@ -115,23 +115,36 @@ namespace ZZX
         }
 
 
-        private ZZXDictionary getSystemParams<T>(IZZXRequest<T> request) where T : ZZXResponse
+        public ZZXDictionary getSystemParams<T>(IZZXRequest<T> request) where T : ZZXResponse
         {
             string apiVersion = Version;
-            String appParamsQuery = WebUtils.BuildQuery(request.GetParameters(), _charset);
-            string encryptedAppParam = RSAUtil.Encrypt(appParamsQuery, _publicKey, _charset);
+            //String appParamsQuery = WebUtils.BuildQuery(request.GetParameters(), _charset);
+            //string encryptedAppParam = RSAUtil.Encrypt(appParamsQuery, _publicKey, _charset);
             ZZXDictionary sysParams = new ZZXDictionary();
             sysParams.Add(METHOD, request.GetApiName());
             sysParams.Add(VERSION, apiVersion);
             sysParams.Add(ChANNELID,_channelId);
-            sysParams.Add(SIGNTYPE,"RSA2");//写死
+            sysParams.Add(SIGNTYPE, "RSA2");//写死  是不是这个有问题
+            sysParams.Add(PARAMS, request.GetParams());
+            var d=sysParams.OrderBy(p=>p.Key).ToDictionary(p => p.Key, o => o.Value); 
             // 添加签名参数
-            sysParams.Add(SIGN, RSAUtil.Sign(appParamsQuery, _privateKey, _charset));
+            sysParams.Add(SIGN, RSAUtil.Sign(WebUtils.BuildQuery(d, false,_charset), _privateKey, _charset));
 
-            sysParams.Add(PARAMS, encryptedAppParam);
-            sysParams.Add(CHARSET, _charset);
+            //sysParams.Add(CHARSET, _charset);
 
             return sysParams;
+        }
+
+        public string decryptAndVerifySign(string encryptedResponse, string sign)
+        {
+            string decryptedResponse = RSAUtil.Decrypt(encryptedResponse, _privateKey, _charset);
+            bool success = RSAUtil.Verify(decryptedResponse, sign, _publicKey, _charset);
+
+            if (success == false)
+            {
+                throw new ZZXException("check sign failed: " + decryptedResponse);
+            }
+            return decryptedResponse;
         }
 
 

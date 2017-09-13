@@ -8,12 +8,14 @@ namespace ZZX
 {
     public interface IZZXRequest<T> where T : ZZXResponse
     {
-        
+
         /// <summary>
         /// Api方法名称
         /// </summary>
         /// <returns></returns>
         string GetApiName();
+
+        string GetParams();
 
         /// <summary>
         /// 获取所有的Key-Value形式的文本请求参数字典。其中：

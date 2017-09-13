@@ -13,16 +13,30 @@ namespace ZZX.Util
 {
     public class RSAUtil
     {
-        public static string Encrypt(string data, string publickey, string charset)
+        /// <summary>
+        /// 用我的私钥进行加密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="privatekey"></param>
+        /// <param name="charset"></param>
+        /// <returns></returns>
+        public static string Encrypt(string data, string privatekey, string charset)
         {
             byte[] dataInBytes = Encoding.GetEncoding(charset).GetBytes(data);
-            byte[] btEncryptedSecret = Encrypt(dataInBytes, publickey);
+            byte[] btEncryptedSecret = Encrypt(dataInBytes, privatekey);
             return Convert.ToBase64String(btEncryptedSecret);
         }
-        public static string Decrypt(string data, string privateKey, String charset)
+        /// <summary>
+        /// 用中子星的公钥解密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="publicKey"></param>
+        /// <param name="charset"></param>
+        /// <returns></returns>
+        public static string Decrypt(string data, string publicKey, String charset)
         {
             byte[] dataInBytes = Convert.FromBase64String(data);
-            byte[] de = Decrypt(dataInBytes, privateKey);
+            byte[] de = Decrypt(dataInBytes, publicKey);
             return Encoding.GetEncoding(charset).GetString(de);
         }
 
@@ -30,6 +44,7 @@ namespace ZZX.Util
         {
             privateKey = ParseRSAPrivateKey(privateKey);
             RSACryptoServiceProvider rsaCsp = new RSACryptoServiceProvider();
+            
             rsaCsp.FromXmlString(privateKey);
 
 
@@ -42,12 +57,23 @@ namespace ZZX.Util
             {
                 dataBytes = Encoding.GetEncoding(charset).GetBytes(data);
             }
-
+            //这里签名用了RSA 应该用SHA256
+            //SHA256CryptoServiceProvider sha2 = new SHA256CryptoServiceProvider();
+            SHA1CryptoServiceProvider sha2 = new SHA1CryptoServiceProvider();
             byte[] signatureBytes = rsaCsp.SignData(dataBytes, "SHA256");
-
+           
+            
             return Convert.ToBase64String(signatureBytes);
         }
 
+        /// <summary>
+        /// 验签这里需要修改一下
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="signedString"></param>
+        /// <param name="publicKey"></param>
+        /// <param name="charset"></param>
+        /// <returns></returns>
         public static bool Verify(string content, string signedString, string publicKey, string charset)
         {
             publicKey = ParseRSAPublicKey(publicKey);
@@ -57,16 +83,16 @@ namespace ZZX.Util
             byte[] data = Encoding.GetEncoding(charset).GetBytes(content);
             byte[] signedData = Convert.FromBase64String(signedString);
 
-            SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
-            bool result = rsaPub.VerifyData(data, sha1, signedData);
+            SHA256CryptoServiceProvider sha2 = new SHA256CryptoServiceProvider(); //SHA256CryptoServiceProvider
+            bool result = rsaPub.VerifyData(data, sha2, signedData);
             return result;
         }
 
-        private static byte[] Encrypt(byte[] dataInBytes, string publickey)
+        private static byte[] Encrypt(byte[] dataInBytes, string privatekey)
         {
-            publickey = ParseRSAPublicKey(publickey);
+            privatekey = ParseRSAPrivateKey(privatekey);
             RSACryptoServiceProvider rsaSender = new RSACryptoServiceProvider();
-            rsaSender.FromXmlString(publickey);
+            rsaSender.FromXmlString(privatekey);
 
 
             int keySize = 0;
@@ -127,9 +153,9 @@ namespace ZZX.Util
             return btEncryptedSecret;
         }
 
-        public static byte[] Decrypt(byte[] dataInBytes, string privateKey)
+        public static byte[] Decrypt(byte[] dataInBytes, string publicKey)
         {
-            privateKey = ParseRSAPrivateKey(privateKey);
+            publicKey = ParseRSAPublicKey(publicKey);
             int keySize = 0;
             int blockSize = 0;
             int counter = 0;
@@ -142,7 +168,7 @@ namespace ZZX.Util
             byte[] btDecryptedSecret;
 
             RSACryptoServiceProvider rsaReceiver = new RSACryptoServiceProvider();
-            rsaReceiver.FromXmlString(privateKey);
+            rsaReceiver.FromXmlString(publicKey);
             keySize = rsaReceiver.KeySize / 8;
             blockSize = keySize - 11;
 
