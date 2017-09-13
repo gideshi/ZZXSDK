@@ -22,17 +22,23 @@ namespace ZZXTest
         {
             string privateKey = Cfg.Get("privateKey");
             string publicKey = Cfg.Get("publicKey");
+            string myPublicKey = Cfg.Get("myPublicKey");
             string charset = "UTF-8";
             var text = "123";
             var sss = "mLk38/34Cv/O2514rMkK4fTsmaSD04YhWqM7cWp6Cxq9Vi6t4jySYIOglmRvW09bq9+UcmNCMPgVCrq0Zu06a9Mw7EXq3eHcULQTjL3QNJGzkjq27nnl2axsZRpg47vJSc9h5YGgCsFQeO+gVYDNN/0QX79PpdudyytB7kHVFtk=";
             //var s = RSAUtil.Encrypt(text, privateKey, charset);
 
-            var s = RSAUtil.Sign(text,privateKey,charset);
+            var s = RSAUtil.Sign(text, privateKey, charset);
 
-            Console.Write(s);
+            Console.WriteLine($"签名：{s}");
 
-            //var t=RSAUtil.Verify("123",sss,publicKey,charset);
-            //Console.WriteLine(t);
+            //用我的公钥来验下这个签
+
+            var tt = RSAUtil.Verify(text, s, myPublicKey, charset);
+            Console.WriteLine($"验签：{tt}");
+
+            var t = RSAUtil.Verify(text, sss, publicKey, charset);
+            Console.WriteLine($"对方验签：{t}");
             //SignTest();
             //bctest();
             Console.ReadLine();
