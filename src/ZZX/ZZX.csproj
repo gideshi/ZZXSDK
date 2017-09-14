@@ -138,13 +138,15 @@
     <Compile Include="Response\ZZXApiResponse.cs" />
     <Compile Include="SignItem.cs" />
     <Compile Include="Util\FileItem.cs" />
+    <Compile Include="Util\HttpHelper.cs" />
+    <Compile Include="Util\WebUtils121.cs" />
     <Compile Include="Util\RSAUtil.cs" />
     <Compile Include="Util\StringUtil.cs" />
     <Compile Include="Util\WebUtils.cs" />
     <Compile Include="Util\ZZXUtils.cs" />
+    <Compile Include="ZZXConstants.cs" />
     <Compile Include="ZZXException.cs" />
     <Compile Include="ZZXClient.cs" />
-    <Compile Include="ZZXConstants.cs" />
     <Compile Include="ZZXDictionary.cs" />
     <Compile Include="ZZXResponse.cs" />
   </ItemGroup>

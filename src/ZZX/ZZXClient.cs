@@ -45,6 +45,8 @@ namespace ZZX
 
         //默认编码
         private string _charset = ZZXConstants.DEFAULT_CHARSET;
+        //算法名称
+        private string _singType = ZZXConstants.SIGNTYPE;
 
         private WebUtils _webUtils;
 
@@ -54,7 +56,7 @@ namespace ZZX
             set { _version = value; }
         }
 
-        public ZZXClient(string serverUrl, string channelId,string privateKey, string publicKey)
+        public ZZXClient(string serverUrl, string channelId, string privateKey, string publicKey)
         {
             _serverUrl = serverUrl;
             _privateKey = privateKey;
@@ -63,43 +65,27 @@ namespace ZZX
             _webUtils = new WebUtils();
         }
 
-        public ZZXClient(string serverUrl, string channelId,string privateKey, string publicKey, string charset)
+        public ZZXClient(string serverUrl, string channelId, string privateKey, string publicKey, string charset)
         {
             _serverUrl = serverUrl;
             _privateKey = privateKey;
             _publicKey = publicKey;
             _channelId = channelId;
             _charset = charset;
+
             _webUtils = new WebUtils();
         }
 
         public T Execute<T>(IZZXRequest<T> request) where T : ZZXResponse
         {
-            return Execute<T>(request, null);
-        }
-
-        public T Execute<T>(IZZXRequest<T> request, string accessToken) where T : ZZXResponse
-        {
             if (string.IsNullOrEmpty(_charset))
             {
                 _charset = "UTF-8";
             }
-
-
             ZZXDictionary sysParams = getSystemParams(request);
-
-            // 是否需要上传文件
             string body;
-            if (request is IZZXUploadRequest<T>)
-            {
-                IZZXUploadRequest<T> uRequest = (IZZXUploadRequest<T>)request;
-                IDictionary<string, FileItem> fileParams = ZZXUtils.CleanupDictionary(uRequest.GetFileParameters());
-                body = _webUtils.DoPost(_serverUrl, sysParams, fileParams, _charset);
-            }
-            else
-            {
-                body = _webUtils.DoPost(_serverUrl, sysParams,_charset);
-            }
+            
+            body = _webUtils.DoPost(_serverUrl, sysParams, _charset);
 
             //string bizResponse = RSAUtil.ParseBizResponse(body, _privateKey, _charset);
             string bizResponse = body;
@@ -117,21 +103,24 @@ namespace ZZX
 
         public ZZXDictionary getSystemParams<T>(IZZXRequest<T> request) where T : ZZXResponse
         {
-            string apiVersion = Version;
-            //String appParamsQuery = WebUtils.BuildQuery(request.GetParameters(), _charset);
-            //string encryptedAppParam = RSAUtil.Encrypt(appParamsQuery, _publicKey, _charset);
+            string apiVersion = null;
+            if (!string.IsNullOrEmpty(request.GetApiVersion()))
+            {
+                apiVersion = request.GetApiVersion();
+            }
+            else
+            {
+                apiVersion = Version;
+            }
             ZZXDictionary sysParams = new ZZXDictionary();
             sysParams.Add(METHOD, request.GetApiName());
             sysParams.Add(VERSION, apiVersion);
-            sysParams.Add(ChANNELID,_channelId);
-            sysParams.Add(SIGNTYPE, "RSA2");//写死  是不是这个有问题
+            sysParams.Add(ChANNELID, _channelId);
+            sysParams.Add(SIGNTYPE, _singType);
             sysParams.Add(PARAMS, request.GetParams());
-            var d=sysParams.OrderBy(p=>p.Key).ToDictionary(p => p.Key, o => o.Value); 
+            var d = sysParams.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);//签名需要先排序下 中子星文档要求
             // 添加签名参数
-            sysParams.Add(SIGN, RSAUtil.Sign(WebUtils.BuildQuery(d, false,_charset), _privateKey, _charset));
-
-            //sysParams.Add(CHARSET, _charset);
-
+            sysParams.Add(SIGN, RSAUtil.Sign(WebUtils.BuildQuery(d, false, _charset), _privateKey, _charset));
             return sysParams;
         }
 

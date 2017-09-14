@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DotNet
+namespace ZZXSDK.Tests
 {
     public class Class1
     {

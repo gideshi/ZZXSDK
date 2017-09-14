@@ -7,9 +7,7 @@ using Jayrock.Json.Conversion;
 
 namespace ZZX.Util
 {
-    /// <summary>
-    /// ZMOP系统工具类。
-    /// </summary>
+  
     public abstract class ZZXUtils
     {
 

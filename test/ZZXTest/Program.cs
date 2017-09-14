@@ -20,6 +20,13 @@ namespace ZZXTest
     {
         static void Main(string[] args)
         {
+            //signtest();
+            SignTest();
+            Console.ReadLine();
+        }
+
+        static void signtest()
+        {
             string privateKey = Cfg.Get("privateKey");
             string publicKey = Cfg.Get("publicKey");
             string myPublicKey = Cfg.Get("myPublicKey");
@@ -39,72 +46,6 @@ namespace ZZXTest
 
             var t = RSAUtil.Verify(text, sss, publicKey, charset);
             Console.WriteLine($"对方验签：{t}");
-            //SignTest();
-            //bctest();
-            Console.ReadLine();
-        }
-
-        
-
-        static void bctest()
-        {
-
-            //RSA密钥对的构造器 
-            RsaKeyPairGenerator keyGenerator = new RsaKeyPairGenerator();
-
-            //RSA密钥构造器的参数 
-            RsaKeyGenerationParameters param = new RsaKeyGenerationParameters(
-                Org.BouncyCastle.Math.BigInteger.ValueOf(3),
-                new Org.BouncyCastle.Security.SecureRandom(),
-                1024,   //密钥长度 
-                25);
-            //用参数初始化密钥构造器 
-            keyGenerator.Init(param);
-            //产生密钥对 
-            AsymmetricCipherKeyPair keyPair = keyGenerator.GenerateKeyPair();
-            //获取公钥和密钥 
-            AsymmetricKeyParameter publicKey = keyPair.Public;
-            AsymmetricKeyParameter privateKey = keyPair.Private;
-            if (((RsaKeyParameters)publicKey).Modulus.BitLength < 1024)
-            {
-                Console.WriteLine("failed key generation (1024) length test");
-            }
-            //一个测试…………………… 
-            //输入，十六进制的字符串，解码为byte[] 
-            //string input = "4e6f77206973207468652074696d6520666f7220616c6c20676f6f64206d656e"; 
-            //byte[] testData = Org.BouncyCastle.Utilities.Encoders.Hex.Decode(input);            
-            string input = "123";
-            byte[] testData = Encoding.UTF8.GetBytes(input);
-            Console.WriteLine("明文:" + input + Environment.NewLine);
-            //非对称加密算法，加解密用 
-            IAsymmetricBlockCipher engine = new RsaEngine();
-            //公钥加密 
-            engine.Init(true, publicKey);
-            try
-            {
-                testData = engine.ProcessBlock(testData, 0, testData.Length);
-                Console.WriteLine("密文（base64编码）:" + Convert.ToBase64String(testData) + Environment.NewLine);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("failed - exception " + Environment.NewLine + ex.ToString());
-            }
-            //私钥解密 
-            engine.Init(false, privateKey);
-            try
-            {
-                testData = engine.ProcessBlock(testData, 0, testData.Length);
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("failed - exception " + e.ToString());
-            }
-            if (input.Equals(Encoding.UTF8.GetString(testData)))
-            {
-                Console.WriteLine("解密成功");
-            }
-            Console.Read();
         }
 
         static void defaulttest()
@@ -157,8 +98,6 @@ namespace ZZXTest
         static void SignTest()
         {
            
-        
-
             string ss = "";
             string url = Cfg.Get("url");
             string channelId = Cfg.Get("channelId");
@@ -186,28 +125,28 @@ namespace ZZXTest
 
             var parms = JsonConvert.SerializeObject(dic);
 
-            using (HttpClient client = new HttpClient())
-            {
-                IEnumerable<KeyValuePair<string, string>> queryPart = new List<KeyValuePair<string, string>>(){
-                                    new KeyValuePair<string, string>("params",parms),
-                                    new KeyValuePair<string, string>("sign",sign)
-                                };
-                HttpContent q = new FormUrlEncodedContent(queryPart);
-                //url = baseurl + url;
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    IEnumerable<KeyValuePair<string, string>> queryPart = new List<KeyValuePair<string, string>>(){
+            //                        new KeyValuePair<string, string>("params",parms),
+            //                        new KeyValuePair<string, string>("sign",sign)
+            //                    };
+            //    HttpContent q = new FormUrlEncodedContent(queryPart);
+            //    //url = baseurl + url;
 
-                using (HttpResponseMessage response = client.PostAsync("https://ssl-scf.xingyoucai.com/api/v1/antai/checkSign.do", q).Result)
-                {
-                    using (HttpContent content = response.Content)
-                    {
-                        var html = content.ReadAsStringAsync().Result;
-                        Console.WriteLine(html);
-                    }
-                }
+            //    using (HttpResponseMessage response = client.PostAsync("https://ssl-scf.xingyoucai.com/api/v1/antai/checkSign.do", q).Result)
+            //    {
+            //        using (HttpContent content = response.Content)
+            //        {
+            //            var html = content.ReadAsStringAsync().Result;
+            //            Console.WriteLine(html);
+            //        }
+            //    }
 
-            }
+            //}
 
-            //HttpClient client = new HttpClient();
-            //var t = client.PostAsync("https://ssl-scf.xingyoucai.com/api/v1/antai/checkSign.do?params=" + parms + "&sign=" + sign).Result;
+            HttpClient client = new HttpClient();
+            var t = client.GetAsync("https://ssl-scf.xingyoucai.com/api/v1/antai/checkSign.do?params=" + parms + "&sign=" + sign).Result;
 
 
 
@@ -215,7 +154,7 @@ namespace ZZXTest
 
             //var result = RequestHelper.HttpPost("https://ssl-scf.xingyoucai.com/api/v1/antai/checkSign.do", body: body);
 
-            //Console.WriteLine(t);
+            Console.WriteLine(t);
 
         }
     }

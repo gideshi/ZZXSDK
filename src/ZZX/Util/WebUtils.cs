@@ -34,7 +34,7 @@ namespace ZZX.Util
         public string DoPost(string url, IDictionary<string, string> parameters, string charset)
         {
             HttpWebRequest req = GetWebRequest(url, "POST");
-            req.ContentType = "application/x-www-form-urlencoded;charset=" + charset;
+            req.ContentType = "application/json;charset=" + charset;
 
             byte[] postData = Encoding.GetEncoding(charset).GetBytes(BuildQuery(parameters, charset));
             Stream reqStream = req.GetRequestStream();
@@ -59,7 +59,7 @@ namespace ZZX.Util
             {
                 if (url.Contains("?"))
                 {
-                    url = url + "&" + BuildQuery(parameters,charset);
+                    url = url + "&" + BuildQuery(parameters, charset);
                 }
                 else
                 {
@@ -68,7 +68,7 @@ namespace ZZX.Util
             }
 
             HttpWebRequest req = GetWebRequest(url, "GET");
-            req.ContentType = "application/x-www-form-urlencoded;charset=" + charset;
+            req.ContentType = "application/json;charset=" + charset;
 
             HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
             Encoding encoding = Encoding.GetEncoding(rsp.CharacterSet);
@@ -141,7 +141,7 @@ namespace ZZX.Util
             req.ServicePoint.Expect100Continue = false;
             req.Method = method;
             req.KeepAlive = true;
-            req.UserAgent = "Zmop4Net";
+            req.UserAgent = "ZZX4Net";
             req.Timeout = this._timeout;
             return req;
         }
@@ -197,7 +197,7 @@ namespace ZZX.Util
             return BuildQuery(parameters, true, charset);
         }
 
-        public static string BuildQuery(IDictionary<string, string> parameters, bool encode, string charset) 
+        public static string BuildQuery(IDictionary<string, string> parameters, bool encode, string charset)
         {
             StringBuilder postData = new StringBuilder();
             bool hasParam = false;
@@ -218,7 +218,7 @@ namespace ZZX.Util
                     postData.Append(name);
                     postData.Append("=");
 
-                    if(encode)
+                    if (encode)
                     {
                         value = HttpUtility.UrlEncode(value, Encoding.GetEncoding(charset));
                     }
@@ -229,7 +229,7 @@ namespace ZZX.Util
             }
 
             return postData.ToString();
-        
+
         }
 
         public static string BuildQueryWithoutEncode(IDictionary<string, string> parameters)

@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Ext\Cfg.cs" />
     <Compile Include="Ext\ExtObject.cs" />
     <Compile Include="Ext\ExtString.cs" />

@@ -13,6 +13,8 @@ namespace ZZX.Request
 
         public string Params { get; set; }
 
+        public string Ver { get; set; }
+
         public string GetApiName()
         {
             return Method;
@@ -23,11 +25,23 @@ namespace ZZX.Request
             return Params;
         }
 
+        public void SetApiVersion(string apiVersion)
+        {
+            Ver = apiVersion;
+        }
+
+        public string GetApiVersion()
+        {
+            return Ver;
+        }
+
         public IDictionary<string, string> GetParameters()
         {
             ZZXDictionary parameters = new ZZXDictionary();
             parameters.Add("params", Params);
             return parameters;
         }
+
+
     }
 }
