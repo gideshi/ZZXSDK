@@ -24,19 +24,14 @@ namespace ZZX.Util
             set { this._timeout = value; }
         }
 
-        /// <summary>
-        /// 执行HTTP POST请求。
-        /// </summary>
-        /// <param name="url">请求地址</param>
-        /// <param name="parameters">请求参数</param>
-        /// <param name="charset">编码字符集</param>
-        /// <returns>HTTP响应</returns>
-        public string DoPost(string url, IDictionary<string, string> parameters, string charset)
+
+
+        public string DoPost(string url, string body, string charset)
         {
             HttpWebRequest req = GetWebRequest(url, "POST");
             req.ContentType = "application/json;charset=" + charset;
 
-            byte[] postData = Encoding.GetEncoding(charset).GetBytes(BuildQuery(parameters, charset));
+            byte[] postData = Encoding.GetEncoding(charset).GetBytes(body);
             Stream reqStream = req.GetRequestStream();
             reqStream.Write(postData, 0, postData.Length);
             reqStream.Close();
@@ -46,94 +41,118 @@ namespace ZZX.Util
             return GetResponseAsString(rsp, encoding);
         }
 
-        /// <summary>
-        /// 执行HTTP GET请求。
-        /// </summary>
-        /// <param name="url">请求地址</param>
-        /// <param name="parameters">请求参数</param>
-        /// <param name="charset">编码字符集</param>
-        /// <returns>HTTP响应</returns>
-        public string DoGet(string url, IDictionary<string, string> parameters, string charset)
-        {
-            if (parameters != null && parameters.Count > 0)
-            {
-                if (url.Contains("?"))
-                {
-                    url = url + "&" + BuildQuery(parameters, charset);
-                }
-                else
-                {
-                    url = url + "?" + BuildQuery(parameters, charset);
-                }
-            }
 
-            HttpWebRequest req = GetWebRequest(url, "GET");
-            req.ContentType = "application/json;charset=" + charset;
+        ///// <summary>
+        ///// 执行HTTP POST请求。
+        ///// </summary>
+        ///// <param name="url">请求地址</param>
+        ///// <param name="parameters">请求参数</param>
+        ///// <param name="charset">编码字符集</param>
+        ///// <returns>HTTP响应</returns>
+        //public string DoPost(string url, IDictionary<string, string> parameters, string charset)
+        //{
+        //    HttpWebRequest req = GetWebRequest(url, "POST");
+        //    req.ContentType = "application/json;charset=" + charset;
 
-            HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
-            Encoding encoding = Encoding.GetEncoding(rsp.CharacterSet);
-            return GetResponseAsString(rsp, encoding);
-        }
+        //    byte[] postData = Encoding.GetEncoding(charset).GetBytes(BuildQuery(parameters, charset));
+        //    Stream reqStream = req.GetRequestStream();
+        //    reqStream.Write(postData, 0, postData.Length);
+        //    reqStream.Close();
 
-        /// <summary>
-        /// 执行带文件上传的HTTP POST请求。
-        /// </summary>
-        /// <param name="url">请求地址</param>
-        /// <param name="textParams">请求文本参数</param>
-        /// <param name="fileParams">请求文件参数</param>
-        /// <param name="charset">编码字符集</param>
-        /// <returns>HTTP响应</returns>
-        public string DoPost(string url, IDictionary<string, string> textParams, IDictionary<string, FileItem> fileParams, string charset)
-        {
-            // 如果没有文件参数，则走普通POST请求
-            if (fileParams == null || fileParams.Count == 0)
-            {
-                return DoPost(url, textParams, charset);
-            }
+        //    HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
+        //    Encoding encoding = Encoding.GetEncoding(charset);
+        //    return GetResponseAsString(rsp, encoding);
+        //}
 
-            string boundary = DateTime.Now.Ticks.ToString("X"); // 随机分隔线
 
-            HttpWebRequest req = GetWebRequest(url, "POST");
-            req.ContentType = "multipart/form-data;charset=" + charset + ";boundary=" + boundary;
+        ///// <summary>
+        ///// 执行HTTP GET请求。
+        ///// </summary>
+        ///// <param name="url">请求地址</param>
+        ///// <param name="parameters">请求参数</param>
+        ///// <param name="charset">编码字符集</param>
+        ///// <returns>HTTP响应</returns>
+        //public string DoGet(string url, IDictionary<string, string> parameters, string charset)
+        //{
+        //    if (parameters != null && parameters.Count > 0)
+        //    {
+        //        if (url.Contains("?"))
+        //        {
+        //            url = url + "&" + BuildQuery(parameters, charset);
+        //        }
+        //        else
+        //        {
+        //            url = url + "?" + BuildQuery(parameters, charset);
+        //        }
+        //    }
 
-            Stream reqStream = req.GetRequestStream();
-            byte[] itemBoundaryBytes = Encoding.GetEncoding(charset).GetBytes("\r\n--" + boundary + "\r\n");
-            byte[] endBoundaryBytes = Encoding.GetEncoding(charset).GetBytes("\r\n--" + boundary + "--\r\n");
+        //    HttpWebRequest req = GetWebRequest(url, "GET");
+        //    req.ContentType = "application/json;charset=" + charset;
 
-            // 组装文本请求参数
-            string textTemplate = "Content-Disposition:form-data;name=\"{0}\"\r\nContent-Type:text/plain\r\n\r\n{1}";
-            IEnumerator<KeyValuePair<string, string>> textEnum = textParams.GetEnumerator();
-            while (textEnum.MoveNext())
-            {
-                string textEntry = string.Format(textTemplate, textEnum.Current.Key, textEnum.Current.Value);
-                byte[] itemBytes = Encoding.GetEncoding(charset).GetBytes(textEntry);
-                reqStream.Write(itemBoundaryBytes, 0, itemBoundaryBytes.Length);
-                reqStream.Write(itemBytes, 0, itemBytes.Length);
-            }
+        //    HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
+        //    Encoding encoding = Encoding.GetEncoding(rsp.CharacterSet);
+        //    return GetResponseAsString(rsp, encoding);
+        //}
 
-            // 组装文件请求参数
-            string fileTemplate = "Content-Disposition:form-data;name=\"{0}\";filename=\"{1}\"\r\nContent-Type:{2}\r\n\r\n";
-            IEnumerator<KeyValuePair<string, FileItem>> fileEnum = fileParams.GetEnumerator();
-            while (fileEnum.MoveNext())
-            {
-                string key = fileEnum.Current.Key;
-                FileItem fileItem = fileEnum.Current.Value;
-                string fileEntry = string.Format(fileTemplate, key, fileItem.GetFileName(), fileItem.GetMimeType());
-                byte[] itemBytes = Encoding.GetEncoding(charset).GetBytes(fileEntry);
-                reqStream.Write(itemBoundaryBytes, 0, itemBoundaryBytes.Length);
-                reqStream.Write(itemBytes, 0, itemBytes.Length);
+        ///// <summary>
+        ///// 执行带文件上传的HTTP POST请求。
+        ///// </summary>
+        ///// <param name="url">请求地址</param>
+        ///// <param name="textParams">请求文本参数</param>
+        ///// <param name="fileParams">请求文件参数</param>
+        ///// <param name="charset">编码字符集</param>
+        ///// <returns>HTTP响应</returns>
+        //public string DoPost(string url, IDictionary<string, string> textParams, IDictionary<string, FileItem> fileParams, string charset)
+        //{
+        //    // 如果没有文件参数，则走普通POST请求
+        //    if (fileParams == null || fileParams.Count == 0)
+        //    {
+        //        return DoPost(url, textParams, charset);
+        //    }
 
-                byte[] fileBytes = fileItem.GetContent();
-                reqStream.Write(fileBytes, 0, fileBytes.Length);
-            }
+        //    string boundary = DateTime.Now.Ticks.ToString("X"); // 随机分隔线
 
-            reqStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
-            reqStream.Close();
+        //    HttpWebRequest req = GetWebRequest(url, "POST");
+        //    req.ContentType = "multipart/form-data;charset=" + charset + ";boundary=" + boundary;
 
-            HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
-            Encoding encoding = Encoding.GetEncoding(rsp.CharacterSet);
-            return GetResponseAsString(rsp, encoding);
-        }
+        //    Stream reqStream = req.GetRequestStream();
+        //    byte[] itemBoundaryBytes = Encoding.GetEncoding(charset).GetBytes("\r\n--" + boundary + "\r\n");
+        //    byte[] endBoundaryBytes = Encoding.GetEncoding(charset).GetBytes("\r\n--" + boundary + "--\r\n");
+
+        //    // 组装文本请求参数
+        //    string textTemplate = "Content-Disposition:form-data;name=\"{0}\"\r\nContent-Type:text/plain\r\n\r\n{1}";
+        //    IEnumerator<KeyValuePair<string, string>> textEnum = textParams.GetEnumerator();
+        //    while (textEnum.MoveNext())
+        //    {
+        //        string textEntry = string.Format(textTemplate, textEnum.Current.Key, textEnum.Current.Value);
+        //        byte[] itemBytes = Encoding.GetEncoding(charset).GetBytes(textEntry);
+        //        reqStream.Write(itemBoundaryBytes, 0, itemBoundaryBytes.Length);
+        //        reqStream.Write(itemBytes, 0, itemBytes.Length);
+        //    }
+
+        //    // 组装文件请求参数
+        //    string fileTemplate = "Content-Disposition:form-data;name=\"{0}\";filename=\"{1}\"\r\nContent-Type:{2}\r\n\r\n";
+        //    IEnumerator<KeyValuePair<string, FileItem>> fileEnum = fileParams.GetEnumerator();
+        //    while (fileEnum.MoveNext())
+        //    {
+        //        string key = fileEnum.Current.Key;
+        //        FileItem fileItem = fileEnum.Current.Value;
+        //        string fileEntry = string.Format(fileTemplate, key, fileItem.GetFileName(), fileItem.GetMimeType());
+        //        byte[] itemBytes = Encoding.GetEncoding(charset).GetBytes(fileEntry);
+        //        reqStream.Write(itemBoundaryBytes, 0, itemBoundaryBytes.Length);
+        //        reqStream.Write(itemBytes, 0, itemBytes.Length);
+
+        //        byte[] fileBytes = fileItem.GetContent();
+        //        reqStream.Write(fileBytes, 0, fileBytes.Length);
+        //    }
+
+        //    reqStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
+        //    reqStream.Close();
+
+        //    HttpWebResponse rsp = (HttpWebResponse)req.GetResponse();
+        //    Encoding encoding = Encoding.GetEncoding(rsp.CharacterSet);
+        //    return GetResponseAsString(rsp, encoding);
+        //}
 
         public HttpWebRequest GetWebRequest(string url, string method)
         {

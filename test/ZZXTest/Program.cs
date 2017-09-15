@@ -21,8 +21,35 @@ namespace ZZXTest
         static void Main(string[] args)
         {
             //signtest();
-            SignTest();
+            //SignTest();
+            signzzxtest();
             Console.ReadLine();
+        }
+
+        static void signzzxtest()
+        {
+            string privateKey = Cfg.Get("privateKey");
+            string publicKey = Cfg.Get("publicKey");
+            string myPublicKey = Cfg.Get("myPublicKey");
+            string charset = "UTF-8";
+
+            var dic = new Dictionary<string, string>();
+            dic["channelId"] = "3";
+            dic["method"] = "loanApply";
+            dic["params"] =JsonConvert.SerializeObject(new { loanId= "20170915174747000008" });
+            dic["signType"] = "RSA2";
+            dic["ver"] = "1.0";
+            //var text = "channelId=3&method=loanApply&params=\"{\"loanId\":\"20170915172722000007\"}\"&signType = RSA2 & ver = 1.0";
+            var d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+            var text = WebUtils.BuildQuery(d, false, charset);
+
+            var sss = "YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs=";
+                      //"YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs="
+            //var s = RSAUtil.Encrypt(text, privateKey, charset);
+
+
+            var t = RSAUtil.Verify(text, sss, publicKey, charset);
+            Console.WriteLine($"对方验签：{t}");
         }
 
         static void signtest()
@@ -32,7 +59,7 @@ namespace ZZXTest
             string myPublicKey = Cfg.Get("myPublicKey");
             string charset = "UTF-8";
             var text = "123";
-            var sss = "mLk38/34Cv/O2514rMkK4fTsmaSD04YhWqM7cWp6Cxq9Vi6t4jySYIOglmRvW09bq9+UcmNCMPgVCrq0Zu06a9Mw7EXq3eHcULQTjL3QNJGzkjq27nnl2axsZRpg47vJSc9h5YGgCsFQeO+gVYDNN/0QX79PpdudyytB7kHVFtk=";
+            var sss = "qGv4v16jabQaVrfVwLGUup3 1xtuSoufwP77d0nsLV 5jfGs7N12143gT0yf8ek1SQv1dtaZlliSxgy aga/Z3tUWAdaUGA8BBsBHYc1OLTzKFGHyMY1QLiokUe5xJ/lbZFuyr3L6uhGTCGqWbni/yinNEA7KEjhJVGuRXxv06s=";
             //var s = RSAUtil.Encrypt(text, privateKey, charset);
 
             var s = RSAUtil.Sign(text, privateKey, charset);

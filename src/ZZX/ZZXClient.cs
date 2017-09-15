@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using ZZX.Parser;
 using ZZX.Util;
+using Newtonsoft.Json;
 
 namespace ZZX
 {
@@ -84,8 +85,9 @@ namespace ZZX
             }
             ZZXDictionary sysParams = getSystemParams(request);
             string body;
-            
-            body = _webUtils.DoPost(_serverUrl, sysParams, _charset);
+
+            //body = WebUtils2.HttpPost(_serverUrl, JsonConvert.SerializeObject(sysParams));
+            body = _webUtils.DoPost(_serverUrl, JsonConvert.SerializeObject(sysParams), _charset);
 
             //string bizResponse = RSAUtil.ParseBizResponse(body, _privateKey, _charset);
             string bizResponse = body;
