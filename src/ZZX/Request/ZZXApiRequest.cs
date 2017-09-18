@@ -35,7 +35,7 @@ namespace ZZX.Request
             return Ver;
         }
 
-        public IDictionary<string, string> GetParameters()
+        public IDictionary<string, object> GetParameters()
         {
             ZZXDictionary parameters = new ZZXDictionary();
             parameters.Add("params", Params);

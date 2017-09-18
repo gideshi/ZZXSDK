@@ -50,10 +50,10 @@ namespace ZZX.Parser
             }
 
             T rsp = (T)obj;
-            if (rsp != null)
-            {
-                rsp.Body = body;
-            }
+            //if (rsp != null)
+            //{
+            //    rsp.Body = body;
+            //}
             return rsp;
         }
 
@@ -62,23 +62,23 @@ namespace ZZX.Parser
             return null;
         }
 
-        public SignItem GetSignItem(IZZXRequest<T> request, T response)
-        {
-            string body = response.Body;
-            if (string.IsNullOrEmpty(body))
-            {
-                return null;
-            }
+        //public SignItem GetSignItem(IZZXRequest<T> request, T response)
+        //{
+        //    string body = response.Body;
+        //    if (string.IsNullOrEmpty(body))
+        //    {
+        //        return null;
+        //    }
 
-            SignItem signItem = new SignItem();
-            string sign = GetSign(body);
-            signItem.Sign = sign;
+        //    SignItem signItem = new SignItem();
+        //    string sign = GetSign(body);
+        //    signItem.Sign = sign;
 
-            string signSourceData = GetSignSourceData(request, body);
-            signItem.SignSourceDate = signSourceData;
+        //    string signSourceData = GetSignSourceData(request, body);
+        //    signItem.SignSourceDate = signSourceData;
 
-            return signItem;
-        }
+        //    return signItem;
+        //}
 
         #endregion
 

@@ -132,12 +132,6 @@
     <Compile Include="Jayrock\Json\Json\JsonWriterBracket.cs" />
     <Compile Include="Jayrock\Json\UnixTime.cs" />
     <Compile Include="Jayrock\Mask.cs" />
-    <Compile Include="Parser\IZZXReader.cs" />
-    <Compile Include="Parser\IZZXParser.cs" />
-    <Compile Include="Parser\ZZXXmlParser.cs" />
-    <Compile Include="Parser\ZZXJsonReader.cs" />
-    <Compile Include="Parser\ZZXAttribute.cs" />
-    <Compile Include="Parser\ZZXJsonParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\ZZXApiRequest.cs" />
     <Compile Include="Response\ZZXApiResponse.cs" />

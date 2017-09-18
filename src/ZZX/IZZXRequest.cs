@@ -38,6 +38,6 @@ namespace ZZX
         /// Value: 请求参数文本值
         /// </summary>
         /// <returns>文本请求参数字典</returns>
-        IDictionary<string, string> GetParameters();
+        IDictionary<string, object> GetParameters();
     }
 }

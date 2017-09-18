@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using ZZX.Parser;
 using ZZX.Util;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ZZX
 {
@@ -85,23 +85,34 @@ namespace ZZX
             }
             ZZXDictionary sysParams = getSystemParams(request);
             string body;
-
-            //body = WebUtils2.HttpPost(_serverUrl, JsonConvert.SerializeObject(sysParams));
             body = _webUtils.DoPost(_serverUrl, JsonConvert.SerializeObject(sysParams), _charset);
-
-            //string bizResponse = RSAUtil.ParseBizResponse(body, _privateKey, _charset);
             string bizResponse = body;
             T rsp = null;
-            IZZXParser<T> parser = null;
 
-            //如果验签失败则抛出异常
-            RSAUtil.VerifySign(body, bizResponse, _publicKey, _charset);
+            //再这里转换出来然后验签
+            ZZXDictionary dic = new ZZXDictionary();
+            JObject jObject = JsonConvert.DeserializeObject(bizResponse) as JObject;
+            if (jObject != null)
+            {
+                //去掉 statuscode errmsg  sign 三个键值对 排序组合成待签名字符串
+                if (jObject["sign"] != null)
+                {
+                    var sign = jObject["sign"].ToString();
+                    dic.Add("method", jObject["method"].ToString());
+                    dic.Add("ver", jObject["ver"].ToString());
+                    dic.Add("channelId", jObject["channelId"].ToString());
+                    dic.Add("signType", jObject["signType"].ToString());
+                    if (jObject["params"] != null)
+                        dic.Add("params", JsonConvert.SerializeObject(jObject["params"]));
+                    var d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+                    var s = WebUtils.BuildQuery(d, false, _charset);
+                    RSAUtil.VerifySign(s, sign, _publicKey, _charset);
+                }
+            }
 
-            parser = new ZZXJsonParser<T>();
-            rsp = parser.ParseBizObj(bizResponse, _charset);
+            rsp = JsonConvert.DeserializeObject<T>(bizResponse);
             return rsp;
         }
-
 
         public ZZXDictionary getSystemParams<T>(IZZXRequest<T> request) where T : ZZXResponse
         {
@@ -124,32 +135,6 @@ namespace ZZX
             // 添加签名参数
             sysParams.Add(SIGN, RSAUtil.Sign(WebUtils.BuildQuery(d, false, _charset), _privateKey, _charset));
             return sysParams;
-        }
-
-        public string decryptAndVerifySign(string encryptedResponse, string sign)
-        {
-            string decryptedResponse = RSAUtil.Decrypt(encryptedResponse, _privateKey, _charset);
-            bool success = RSAUtil.Verify(decryptedResponse, sign, _publicKey, _charset);
-
-            if (success == false)
-            {
-                throw new ZZXException("check sign failed: " + decryptedResponse);
-            }
-            return decryptedResponse;
-        }
-
-
-        //先得到未签名字符串
-        private void BuildParams()
-        {
-            //_formDic = new Dictionary<string, string>();
-            //_formDic["method"] = _method;
-            //_formDic["ver"] = _ver;
-            //_formDic["channelId"] = _channelId;
-            //_formDic["signType"] = _signType;
-            //_formDic["sign"] = _sign;
-            //_formDic["params"] = _params;
-            //_formDic = _formDic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);//排序
         }
 
     }

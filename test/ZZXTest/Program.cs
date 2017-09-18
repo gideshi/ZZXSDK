@@ -33,23 +33,36 @@ namespace ZZXTest
             string myPublicKey = Cfg.Get("myPublicKey");
             string charset = "UTF-8";
 
-            var dic = new Dictionary<string, string>();
+            var dic = new Dictionary<string, object>();
             dic["channelId"] = "3";
             dic["method"] = "loanApply";
-            dic["params"] =JsonConvert.SerializeObject(new { loanId= "20170915174747000008" });
+            dic["params"] = JsonConvert.SerializeObject(new { loanId = "20170915174747000008" });
             dic["signType"] = "RSA2";
             dic["ver"] = "1.0";
-            //var text = "channelId=3&method=loanApply&params=\"{\"loanId\":\"20170915172722000007\"}\"&signType = RSA2 & ver = 1.0";
+            //dic["statusCode"] = "900";
+            //dic["errMsg"] = "签名校验失败";
+            //          //var text = "channelId=3&method=loanApply&params=\"{\"loanId\":\"20170915172722000007\"}\"&signType = RSA2 & ver = 1.0";
             var d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
             var text = WebUtils.BuildQuery(d, false, charset);
 
-            var sss = "YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs=";
-                      //"YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs="
-            //var s = RSAUtil.Encrypt(text, privateKey, charset);
+            //          var sss = "YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs=";
+            //          //"YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs="
+            //             //oOzbzpanqMkEqib40YcnDaw7eb296ORiEE37Ysz/XpJVeJtvqAsZ5yIseXFMsXRjJZ1yCyknuspZ5qoglIDhHkgPn/S2UBnR1f/JuyCHifxW7tJgu1CpbFdHZ7BFHwGmxb97Jx0pOYKaVKW14bTZgnLKepBStT4SjhFeX7LUPoE=
+            ////var s = RSAUtil.Encrypt(text, privateKey, charset);
 
-
+            //var text = "channelId=3&method=loanApply&params={ \"loanId\": \"20170918151253000014\"}&signType=RSA2&ver=1.0";
+            var sss = "CZTu0PmE7WnsP1rBQxdAGIZTPcAVmPRidSgbu6xjR+/ATPWdU/QLSnjf235MVJdZthYwHg2+HU4I+cb73Tl5YYmEz6O+uxIkI9YfWN+iQMWygtzkoAC6Ohp9Q/YjM1cWe4u8qpk4hoJzcKJiGuu90tV7Pg+6uUTGjUaBZJTzXc8=";
+                      //"oOzbzpanqMkEqib40YcnDaw7eb296ORiEE37Ysz/XpJVeJtvqAsZ5yIseXFMsXRjJZ1yCyknuspZ5qoglIDhHkgPn/S2UBnR1f/JuyCHifxW7tJgu1CpbFdHZ7BFHwGmxb97Jx0pOYKaVKW14bTZgnLKepBStT4SjhFeX7LUPoE="
             var t = RSAUtil.Verify(text, sss, publicKey, charset);
             Console.WriteLine($"对方验签：{t}");
+
+
+            var res = "{\"statusCode\":200,\"errMsg\":\"success\",\"method\":\"loanApply\",\"ver\":\"1.0\",\"channelId\":\"3\",\"signType\":\"RSA2\",\"sign\":\"LzQ7rhhoCcn3in6J0kArQak+J0zBzFOEtiDaLNAMDpctdQYK9aEUNUlhK5hZJ9ExP+miq1AXr9EMNya1aZxibPh/MdKYnr9vaNHQk7hpUbycE9bxP1cdrFB9VgLOLQyAf8HF0njTGSK/ozCxzqrhqtT1Y+9WcQbRs7h+yLyfoFA=\",\"params\":{\"loanId\":\"20170918144652000012\"}}";
+
+            var des_dic=JsonConvert.DeserializeObject<IDictionary<string, object>>(res);
+
+            Console.WriteLine(des_dic);
+
         }
 
         static void signtest()

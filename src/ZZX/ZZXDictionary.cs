@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ZZX
 {
-    public class ZZXDictionary: Dictionary<string, string>
+    public class ZZXDictionary: Dictionary<string, object>
     {
         private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
         public ZZXDictionary() { }
 
-        public ZZXDictionary(IDictionary<string, string> dictionary)
+        public ZZXDictionary(IDictionary<string, object> dictionary)
             : base(dictionary)
         { }
 

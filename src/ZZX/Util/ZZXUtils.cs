@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Jayrock.Json.Conversion;
 
 namespace ZZX.Util
 {
-  
+
     public abstract class ZZXUtils
     {
 
@@ -141,7 +141,7 @@ namespace ZZX.Util
 
         public static IDictionary ParseJson(string body)
         {
-            return JsonConvert.Import(body) as IDictionary;
+            return JsonConvert.DeserializeObject<IDictionary>(body);
         }
     }
 }

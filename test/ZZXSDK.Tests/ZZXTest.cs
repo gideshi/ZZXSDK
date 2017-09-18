@@ -22,10 +22,10 @@ namespace ZZXSDK.Tests
         string publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzamRTrfZqZIn7AUGJnu3USYpgFw9vODHxRHgDI8wVh3Tg49FvsweSWONrsFyxRR5Jv1UQ3S78NiRg3sObcI3N8ERlEgeTdAYmVN/061XRXH5GO5eNd6gN1uYRqflZaL6B1hJ3nPhnnqDmoiCmbl6PXe0QHrOEGrqKqF4lEG52DwIDAQAB";
         string charset = "UTF-8";
 
-
-
+        #region     LoabApply  贷款申请接口
+       
         [TestMethod]
-        public void LoanApply()
+        public void LoanApplyFail()
         {
             ZZXClient zzxclient = new ZZXClient(url, channelId, privateKey, publicKey, charset);
             ZZXApiRequest request = new ZZXApiRequest();
@@ -61,7 +61,56 @@ namespace ZZXSDK.Tests
             request.Params = JsonConvert.SerializeObject(parms);
             ZZXApiResponse response = zzxclient.Execute(request);
 
-            Assert.AreEqual(1, 2);
+            Assert.AreNotEqual(response.StatusCode, 200);
         }
+
+        [TestMethod]
+        public void LoanApplySuccess()
+        {
+            ZZXClient zzxclient = new ZZXClient(url, channelId, privateKey, publicKey, charset);
+            ZZXApiRequest request = new ZZXApiRequest();
+            request.Method = "loanApply";
+
+            var orders = new List<Order>();
+            Order order = null;
+            for (int i = 1; i < 10; i++)
+            {
+                order = new Order();
+                order.OrderId = $"DDBH{i}";
+                order.Name = $"订单名称{i}";
+                order.OrganizationId = $"DWBH{i}";
+                order.Organization = $"单位名称{i}";
+                order.Mobile = $"1590000000{i}";
+                order.CardNO = $"32038100000000000{i}";
+                order.DivideRate = i / 10;
+                order.Level = $"套餐档次{i}";
+                order.OrderDate = $"2017-09-1{i}";
+                order.PackageDuration = "24";
+                order.Type = "iPhone X";
+
+                orders.Add(order);
+            }
+
+            var parms = new
+            {
+                amount = 100000,
+                productId = "ef0fa7b2e2564f3fb8308caac4be90c0",
+                orders = orders
+            };
+
+            request.Params = JsonConvert.SerializeObject(parms);
+            ZZXApiResponse response = zzxclient.Execute(request);
+
+            dynamic t= response.Params;
+
+            //var tt = t.loanId;
+
+            Assert.AreEqual(response.StatusCode, 200);
+        }
+
+        #endregion
+
+        #region  
+        #endregion
     }
 }

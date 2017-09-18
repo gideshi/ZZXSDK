@@ -11,39 +11,58 @@ namespace ZZX
     public abstract class ZZXResponse
     {
         //private bool success;
-        private string errorCode;
-        private string errorMessage;
-        private string body;
+        private int statusCode;
+        private string errMsg;
+        private string method;
+        private string ver;
+        private string channelId;
+        private string signType;
+        private string sign;
+        private object parms;
 
-        /// <summary>
-        /// 错误码
-        /// 对应 ErrCode
-        /// </summary>
-        [XmlElement("error_code")]
-        public string ErrorCode
+        public int StatusCode
         {
-            get { return errorCode; }
-            set { errorCode = value; }
+            get { return statusCode; }
+            set { statusCode = value; }
         }
 
-        /// <summary>
-        /// 错误信息
-        /// 对应 ErrMsg
-        /// </summary>
-        [XmlElement("error_message")]
-        public string ErrorMessage
+        public string ErrMsg
         {
-            get { return errorMessage; }
-            set { errorMessage = value; }
+            get { return errMsg; }
+            set { errMsg = value; }
         }
 
-        /// <summary>
-        /// 响应原始内容
-        /// </summary>
-        public string Body
+        public string Method
         {
-            get { return body; }
-            set { body = value; }
+            get { return method; }
+            set { method = value; }
+        }
+        public string Ver
+        {
+            get { return ver; }
+            set { ver = value; }
+        }
+
+        public string ChannelId
+        {
+            get { return channelId; }
+            set { channelId = value; }
+        }
+
+        public string SignType
+        {
+            get { return signType; }
+            set { signType = value; }
+        }
+        public string Sign
+        {
+            get { return sign; }
+            set { sign = value; }
+        }
+        public object Params
+        {
+            get { return parms; }
+            set { parms = value; }
         }
     }
 }

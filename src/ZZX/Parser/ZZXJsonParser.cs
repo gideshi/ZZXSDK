@@ -44,10 +44,10 @@ namespace ZZX.Parser
                 rsp = Activator.CreateInstance<T>();
             }
 
-            if (rsp != null)
-            {
-                rsp.Body = body;
-            }
+            //if (rsp != null)
+            //{
+            //    rsp.Body = body;
+            //}
 
             return rsp;
         }
@@ -71,32 +71,32 @@ namespace ZZX.Parser
                 rsp = Activator.CreateInstance<T>();
             }
 
-            if (rsp != null)
-            {
-                rsp.Body = bizResponse;
-            }
+            //if (rsp != null)
+            //{
+            //    rsp.Body = bizResponse;
+            //}
 
             return rsp;
         }
 
 
-        public SignItem GetSignItem(IZZXRequest<T> request, T response)
-        {
-            string body = response.Body;
-            if (string.IsNullOrEmpty(body))
-            {
-                return null;
-            }
+        //public SignItem GetSignItem(IZZXRequest<T> request, T response)
+        //{
+        //    string body = response.Body;
+        //    if (string.IsNullOrEmpty(body))
+        //    {
+        //        return null;
+        //    }
 
-            SignItem signItem = new SignItem();
-            string sign = GetSign(body);
-            signItem.Sign = sign;
+        //    SignItem signItem = new SignItem();
+        //    string sign = GetSign(body);
+        //    signItem.Sign = sign;
 
-            string signSourceData = GetSignSourceData(request, body);
-            signItem.SignSourceDate = signSourceData;
+        //    string signSourceData = GetSignSourceData(request, body);
+        //    signItem.SignSourceDate = signSourceData;
 
-            return signItem;
-        }
+        //    return signItem;
+        //}
 
         #endregion
 

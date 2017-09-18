@@ -17,6 +17,6 @@ namespace ZZX.Parser
 
         T ParseBizObj(string bizResponse, string charset);
 
-        SignItem GetSignItem(IZZXRequest<T> request, T response);
+        //SignItem GetSignItem(IZZXRequest<T> request, T response);
     }
 }

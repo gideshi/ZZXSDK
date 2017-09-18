@@ -1,5 +1,7 @@
 ﻿
-using Jayrock.Json.Conversion;
+//using Jayrock.Json.Conversion;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using System;
@@ -210,55 +212,92 @@ namespace ZZX.Util
                 Convert.ToBase64String(publicKeyParam.Exponent.ToByteArrayUnsigned()));
         }
 
-        public static string ParseBizResponse(string fullResponse, string privateKey, string charset)
+        //public static string ParseBizResponse(string fullResponse, string privateKey, string charset)
+        //{
+        //    IDictionary json = JsonConvert.Import(fullResponse) as IDictionary;
+        //    if (json != null)
+        //    {
+        //        string encryptedNode = json[ZZXConstants.ENCRYPTED].ToString();
+
+        //        bool encrypted = false;
+        //        if (encryptedNode != null)
+        //        {
+        //            encrypted = bool.Parse(encryptedNode);
+        //        }
+
+        //        string bizResponse = null;
+        //        foreach (object key in json.Keys)
+        //        {
+        //            string keyStr = key as string;
+        //            if (keyStr.EndsWith(ZZXConstants.RESPONSE_SUFFIX))
+        //            {
+        //                bizResponse = json[key] as string;
+        //                if (encrypted)
+        //                {
+        //                    bizResponse = Decrypt(bizResponse, privateKey, charset);
+        //                }
+        //                break;
+        //            }
+        //        }
+
+        //        return bizResponse;
+        //    }
+
+        //    return null;
+        //}
+
+        //public static void VerifySign(string fullResponse, string decryptedBizRsp, string publicKey, string charset)
+        //{
+            //IDictionary json = JsonConvert.Import(fullResponse) as IDictionary;
+            //if (json != null)
+            //{
+            //    string bizResponseSign = json[ZZXConstants.BIZ_RESPONSE_SIGN] as string;
+            //    if (bizResponseSign != null)
+            //    {
+            //        bool verifyResult = Verify(decryptedBizRsp, bizResponseSign, publicKey, charset);
+            //        if (verifyResult == false)
+            //        {
+            //            throw new ZZXException("check sign failed: " + json.ToString());
+            //        }
+
+            //    }
+            //}
+        //}
+
+        public static void VerifySign(string unsignString, string signString, string publicKey, string charset)
         {
-            IDictionary json = JsonConvert.Import(fullResponse) as IDictionary;
-            if (json != null)
+            ////IDictionary<string,object> dic = JsonConvert.DeserializeObject<IDictionary<string,object>>(fullResponse);
+            //IDictionary<string, object> dic = new Dictionary<string, object>();
+            //JObject jObject = JsonConvert.DeserializeObject(fullResponse) as JObject;
+            //if (jObject != null)
+            //{
+            //    //去掉 statuscode errmsg  sign 三个键值对 排序组合成待签名字符串
+            //    dic.Add("method", jObject["method"].ToString());
+            //    dic.Remove("errMsg");
+            //    var signobj = dic["sign"];
+            //    if (object.Equals(signobj, null) || object.Equals(signobj, DBNull.Value))
+            //    {
+            //        throw new ZZXException("check sign failed: " + dic.ToString());
+            //    }
+            //    var sign = signobj.ToString().Trim();
+            //    //移除sign
+            //    dic.Remove("sign");
+            //    var d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+            //    var s = WebUtils.BuildQuery(d, false, charset);
+            //    bool verifyResult = Verify(s, sign, publicKey,charset);
+            //    if (verifyResult == false)
+            //    {
+            //        throw new ZZXException("check sign failed: " + dic.ToString());
+            //    }
+            //}
+            if (signString != null)
             {
-                string encryptedNode = json[ZZXConstants.ENCRYPTED].ToString();
-
-                bool encrypted = false;
-                if (encryptedNode != null)
+                bool verifyResult = Verify(unsignString, signString, publicKey, charset);
+                if (verifyResult == false)
                 {
-                    encrypted = bool.Parse(encryptedNode);
+                    throw new ZZXException("check sign failed: " + unsignString);
                 }
 
-                string bizResponse = null;
-                foreach (object key in json.Keys)
-                {
-                    string keyStr = key as string;
-                    if (keyStr.EndsWith(ZZXConstants.RESPONSE_SUFFIX))
-                    {
-                        bizResponse = json[key] as string;
-                        if (encrypted)
-                        {
-                            bizResponse = Decrypt(bizResponse, privateKey, charset);
-                        }
-                        break;
-                    }
-                }
-
-                return bizResponse;
-            }
-
-            return null;
-        }
-
-        public static void VerifySign(string fullResponse, string decryptedBizRsp, string publicKey, string charset)
-        {
-            IDictionary json = JsonConvert.Import(fullResponse) as IDictionary;
-            if (json != null)
-            {
-                string bizResponseSign = json[ZZXConstants.BIZ_RESPONSE_SIGN] as string;
-                if (bizResponseSign != null)
-                {
-                    bool verifyResult = Verify(decryptedBizRsp, bizResponseSign, publicKey, charset);
-                    if (verifyResult == false)
-                    {
-                        throw new ZZXException("check sign failed: " + json.ToString());
-                    }
-
-                }
             }
         }
     }

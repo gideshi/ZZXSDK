@@ -5,6 +5,8 @@ using System.Net;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ZZX.Util
 {
@@ -211,49 +213,51 @@ namespace ZZX.Util
         /// </summary>
         /// <param name="parameters">Key-Value形式请求参数字典</param>
         /// <returns>URL编码后的请求数据</returns>
-        public static string BuildQuery(IDictionary<string, string> parameters, string charset)
+        public static string BuildQuery(IDictionary<string, object> parameters, string charset)
         {
             return BuildQuery(parameters, true, charset);
         }
 
-        public static string BuildQuery(IDictionary<string, string> parameters, bool encode, string charset)
+        public static string BuildQuery(IDictionary<string, object> parameters, bool encode, string charset)
         {
             StringBuilder postData = new StringBuilder();
             bool hasParam = false;
 
-            IEnumerator<KeyValuePair<string, string>> dem = parameters.GetEnumerator();
+            IEnumerator<KeyValuePair<string, object>> dem = parameters.GetEnumerator();
             while (dem.MoveNext())
             {
                 string name = dem.Current.Key;
-                string value = dem.Current.Value;
+                object value =dem.Current.Value;  //value 是json串时在前后增加了换行
+                
                 // 忽略参数名或参数值为空的参数
-                if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(name) && value != null)
                 {
                     if (hasParam)
                     {
                         postData.Append("&");
                     }
-
                     postData.Append(name);
                     postData.Append("=");
-
-                    if (encode)
-                    {
-                        value = HttpUtility.UrlEncode(value, Encoding.GetEncoding(charset));
-                    }
-
-                    postData.Append(value);
+                    postData.Append(value.ToString().Trim());
                     hasParam = true;
                 }
+            }
+
+            var str = postData.ToString();
+            if (encode)
+            {
+                str = HttpUtility.UrlEncode(str, Encoding.GetEncoding(charset));
             }
 
             return postData.ToString();
 
         }
 
-        public static string BuildQueryWithoutEncode(IDictionary<string, string> parameters)
+        public static string BuildQueryWithoutEncode(IDictionary<string, object> parameters)
         {
             return BuildQuery(parameters, false, null);
         }
+
+
     }
 }
