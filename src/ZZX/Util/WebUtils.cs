@@ -238,7 +238,7 @@ namespace ZZX.Util
                     }
                     postData.Append(name);
                     postData.Append("=");
-                    postData.Append(value.ToString().Trim());
+                    postData.Append(value);
                     hasParam = true;
                 }
             }

@@ -19,7 +19,7 @@ namespace ZZX
         /// 获取参数
         /// </summary>
         /// <returns></returns>
-        string GetParams();
+        object GetParams();
 
         /// <summary>
         /// 设置接口版本

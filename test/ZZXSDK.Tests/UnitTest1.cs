@@ -10,6 +10,7 @@ namespace ZZXSDK.Tests
         public void TestMethod1()
         {
             Assert.AreEqual(2,2);
+
         }
     }
 }

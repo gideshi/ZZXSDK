@@ -13,6 +13,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Generators;
+using System.IO;
 
 namespace ZZXTest
 {
@@ -20,10 +21,25 @@ namespace ZZXTest
     {
         static void Main(string[] args)
         {
-            //signtest();
+            signtest();
             //SignTest();
-            signzzxtest();
+            //signzzxtest();
+            //Duqutupian();
             Console.ReadLine();
+        }
+
+        static void Duqutupian()
+        {
+            var path = "F:\\test.jpg";
+            FileStream fs = File.OpenRead(path); //OpenRead
+            int filelength = 0;
+            filelength = (int)fs.Length; //获得文件长度 
+            Byte[] bytes = new Byte[filelength]; //建立一个字节数组 
+            fs.Read(bytes, 0, filelength); //按字节流读取 
+
+            string base64 =Convert.ToBase64String(bytes);
+
+            Console.WriteLine(base64);
         }
 
         static void signzzxtest()
@@ -36,7 +52,8 @@ namespace ZZXTest
             var dic = new Dictionary<string, object>();
             dic["channelId"] = "3";
             dic["method"] = "loanApply";
-            dic["params"] = JsonConvert.SerializeObject(new { loanId = "20170915174747000008" });
+            //dic["params"] = JsonConvert.SerializeObject(new { loanId = "20170915174747000008" });
+            dic["params"] =new { loanId = "20170915174747000008" };
             dic["signType"] = "RSA2";
             dic["ver"] = "1.0";
             //dic["statusCode"] = "900";
@@ -50,8 +67,8 @@ namespace ZZXTest
             //             //oOzbzpanqMkEqib40YcnDaw7eb296ORiEE37Ysz/XpJVeJtvqAsZ5yIseXFMsXRjJZ1yCyknuspZ5qoglIDhHkgPn/S2UBnR1f/JuyCHifxW7tJgu1CpbFdHZ7BFHwGmxb97Jx0pOYKaVKW14bTZgnLKepBStT4SjhFeX7LUPoE=
             ////var s = RSAUtil.Encrypt(text, privateKey, charset);
 
-            //var text = "channelId=3&method=loanApply&params={ \"loanId\": \"20170918151253000014\"}&signType=RSA2&ver=1.0";
-            var sss = "CZTu0PmE7WnsP1rBQxdAGIZTPcAVmPRidSgbu6xjR+/ATPWdU/QLSnjf235MVJdZthYwHg2+HU4I+cb73Tl5YYmEz6O+uxIkI9YfWN+iQMWygtzkoAC6Ohp9Q/YjM1cWe4u8qpk4hoJzcKJiGuu90tV7Pg+6uUTGjUaBZJTzXc8=";
+            //var text = "channelId=3&method=loanApply&params={\"loanId\":\"20170918151253000014\"}&signType=RSA2&ver=1.0";
+            var sss = "YtaXroGTrMptqZPQW8/Cz1ZrMGqL8s4V8JBYQr2LHh0j0WC+BP5NSZxVljBxsrBvv9vyH6l8ODX/1mT8AmYbxptbYW7RGJ0Of87CMJFrmTHb9f9nRFs3j7dNUw6PfSRuT1ItqHXAbEoUO8ZSm278yILIkpdTRJO1EjvdFH25ILs=";
                       //"oOzbzpanqMkEqib40YcnDaw7eb296ORiEE37Ysz/XpJVeJtvqAsZ5yIseXFMsXRjJZ1yCyknuspZ5qoglIDhHkgPn/S2UBnR1f/JuyCHifxW7tJgu1CpbFdHZ7BFHwGmxb97Jx0pOYKaVKW14bTZgnLKepBStT4SjhFeX7LUPoE="
             var t = RSAUtil.Verify(text, sss, publicKey, charset);
             Console.WriteLine($"对方验签：{t}");
@@ -72,7 +89,7 @@ namespace ZZXTest
             string myPublicKey = Cfg.Get("myPublicKey");
             string charset = "UTF-8";
             var text = "123";
-            var sss = "qGv4v16jabQaVrfVwLGUup3 1xtuSoufwP77d0nsLV 5jfGs7N12143gT0yf8ek1SQv1dtaZlliSxgy aga/Z3tUWAdaUGA8BBsBHYc1OLTzKFGHyMY1QLiokUe5xJ/lbZFuyr3L6uhGTCGqWbni/yinNEA7KEjhJVGuRXxv06s=";
+            var sss = "qGv4v16jabQaVrfVwLGUup31xtuSoufwP77d0nsLV5jfGs7N12143gT0yf8ek1SQv1dtaZlliSxgyaga/Z3tUWAdaUGA8BBsBHYc1OLTzKFGHyMY1QLiokUe5xJ/lbZFuyr3L6uhGTCGqWbni/yinNEA7KEjhJVGuRXxv06s=";
             //var s = RSAUtil.Encrypt(text, privateKey, charset);
 
             var s = RSAUtil.Sign(text, privateKey, charset);

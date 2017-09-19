@@ -85,7 +85,8 @@ namespace ZZX
             }
             ZZXDictionary sysParams = getSystemParams(request);
             string body;
-            body = _webUtils.DoPost(_serverUrl, JsonConvert.SerializeObject(sysParams), _charset);
+            var encode = HttpUtility.UrlEncode(JsonConvert.SerializeObject(sysParams));//传递的时候进行url编码
+            body = _webUtils.DoPost(_serverUrl, encode, _charset);
             string bizResponse = body;
             T rsp = null;
 

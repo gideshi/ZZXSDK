@@ -11,7 +11,7 @@ namespace ZZX.Request
     {
         public string Method { get; set; }
 
-        public string Params { get; set; }
+        public object Params { get; set; }
 
         public string Ver { get; set; }
 
@@ -20,7 +20,7 @@ namespace ZZX.Request
             return Method;
         }
 
-        public string GetParams()
+        public object GetParams()
         {
             return Params;
         }
