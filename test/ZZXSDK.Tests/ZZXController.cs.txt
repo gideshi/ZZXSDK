@@ -1,0 +1,176 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using ZZX;
+using ZZX.Entities;
+using ZZX.Util;
+
+namespace Anytime_ZeroPurchase.Api.Controllers
+{
+    [RoutePrefix("api/zzx")]
+    public class ZZXController : ApiController
+    {
+        
+        [HttpPost]
+        [Route("entry")]
+        public IHttpActionResult ZZXEntry([FromBody] Request request)
+        {
+            var response = new Response()
+            {
+                Method = request.Method,
+                Ver = request.Ver,
+                ChannelId = request.ChannelId,
+                SignType = request.SignType
+            };
+            //拿到q先验签看看是否通过，然后开始操作
+            //去掉 statuscode errmsg  sign 三个键值对 排序组合成待签名字符串
+            ZZXDictionary dic = new ZZXDictionary();
+            if (request.Sign != null)
+            {
+                var sign = request.Sign.ToString();
+                dic.Add("method", request.Method);
+                dic.Add("ver", request.Ver);
+                dic.Add("channelId", request.ChannelId);
+                dic.Add("signType", request.SignType);
+                if (request.Parms != null)
+                    dic.Add("params", JsonConvert.SerializeObject(request.Parms));
+                var d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+                var s = WebUtils.BuildQuery(d, false, Api._CHARSET);
+                try
+                {
+                    RSAUtil.VerifySign(s, sign, Api._PUBLICKEY, Api._CHARSET);
+                    if (request.Parms != null)
+                    {
+                        var method = request.Method.GetString().ToLower();
+                        switch (method)
+                        {
+                            case "loanapplyresultnotify":
+                                LoanApplyResultNotify(request, ref response);
+                                break;
+                            case "paymentnotify":
+                                PaymentNotify(request, ref response);
+                                break;
+                            case "refundresultnotify":
+                                RefundResultNotify(request, ref response);
+                                break;
+                            case "customerrefundnotify":
+                                CustomerRefundNotify(request, ref response);
+                                break;
+                            default:
+                                response.StatusCode = 3;
+                                response.ErrMsg = "未知的方法";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        response.StatusCode = 100;
+                        response.ErrMsg = "请求参数不正确";
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    response.StatusCode = 110;//错误代码
+                    response.ErrMsg = "签名验证不通过";
+                }
+                //增加签名
+                dic.Remove("params");
+                if (response.Parms != null)
+                    dic.Add("params", JsonConvert.SerializeObject(request.Parms));
+                d = dic.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+                s = WebUtils.BuildQuery(d, false, Api._CHARSET);
+                sign = RSAUtil.Sign(s, Api._PRIVATEKEY, Api._CHARSET);
+                response.Sign = sign;
+            }
+            else
+            {
+                response.StatusCode = 104;
+                response.ErrMsg = "无效签名";
+            }
+
+            return Ok(response);
+        }
+
+        public void LoanApplyResultNotify(Request request, ref Response response)
+        {
+            //这里主要增加params的数据 和statuscode 和 errmsg 属性
+            LoanApplyResult result = JsonConvert.DeserializeObject<LoanApplyResult>(JsonConvert.SerializeObject(request.Parms));
+            try
+            {
+                //执行逻辑操作
+
+                response.StatusCode = 200;
+                response.ErrMsg = "成功";
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = 500;
+                response.ErrMsg = "内部服务器错误";
+            }
+
+        }
+
+        private void PaymentNotify(Request request, ref Response response)
+        {
+            Payment result = JsonConvert.DeserializeObject<Payment>(JsonConvert.SerializeObject(request.Parms));
+            try
+            {
+                //执行逻辑操作
+
+                response.StatusCode = 200;
+                response.ErrMsg = "成功";
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = 500;
+                response.ErrMsg = "内部服务器错误";
+            }
+        }
+        private void RefundResultNotify(Request request, ref Response response)
+        {
+            RefundResult result = JsonConvert.DeserializeObject<RefundResult>(JsonConvert.SerializeObject(request.Parms));
+            try
+            {
+                //执行逻辑操作
+
+                response.StatusCode = 200;
+                response.ErrMsg = "成功";
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = 500;
+                response.ErrMsg = "内部服务器错误";
+            }
+        }
+        private void CustomerRefundNotify(Request request, ref Response response)
+        {
+            CustomerRefund result = JsonConvert.DeserializeObject<CustomerRefund>(JsonConvert.SerializeObject(request.Parms));
+            try
+            {
+                //执行逻辑操作
+
+                response.StatusCode = 200;
+                response.ErrMsg = "成功";
+            }
+            catch (Exception ex)
+            {
+                response.StatusCode = 500;
+                response.ErrMsg = "内部服务器错误";
+            }
+        }
+
+
+
+
+
+
+
+    }
+
+
+}
