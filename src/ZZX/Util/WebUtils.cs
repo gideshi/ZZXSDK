@@ -227,8 +227,8 @@ namespace ZZX.Util
             while (dem.MoveNext())
             {
                 string name = dem.Current.Key;
-                object value =dem.Current.Value;  //value 是json串时在前后增加了换行
-                
+                object value = dem.Current.Value;  //value 是json串时在前后增加了换行
+
                 // 忽略参数名或参数值为空的参数
                 if (!string.IsNullOrEmpty(name) && value != null)
                 {
@@ -259,5 +259,42 @@ namespace ZZX.Util
         }
 
 
+        public static string BuildQueryT<T>(T q, string charset) where T : JObject
+        {
+            return BuildQueryT(q, true, charset);
+        }
+
+        public static string BuildQueryT<T>(T jo, bool encode, string charset) where T : JObject
+        {
+            StringBuilder postData = new StringBuilder();
+            bool hasParam = false;
+            IEnumerable<JProperty> properties = jo.Properties();
+            foreach (JProperty item in properties)
+            {
+                string name = item.Name;
+                string value = JsonConvert.SerializeObject(item.Value);
+                //我不知道怎么判断去空的问题
+                if (item.HasValues)
+                {
+                   
+                    if (hasParam)
+                    {
+                        postData.Append("&");
+                    }
+                    postData.Append(name);
+                    postData.Append("=");
+                    postData.Append(value);
+                    hasParam = true;
+                }
+            }
+
+            var str = postData.ToString();
+            if (encode)
+            {
+                str = HttpUtility.UrlEncode(str, Encoding.GetEncoding(charset));
+            }
+
+            return postData.ToString();
+        }
     }
 }

@@ -52,9 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="Entities\CustomerRefund.cs" />
     <Compile Include="Entities\Enums.cs" />
+    <Compile Include="Entities\LoanApplyResult.cs" />
     <Compile Include="Entities\Order.cs" />
+    <Compile Include="Entities\Payment.cs" />
     <Compile Include="Entities\RefundNotify.cs" />
+    <Compile Include="Entities\RefundResult.cs" />
+    <Compile Include="Entities\Request.cs" />
+    <Compile Include="Entities\Response.cs" />
     <Compile Include="IZZXClient.cs" />
     <Compile Include="IZZXRequest.cs" />
     <Compile Include="IZZXUploadRequest.cs" />

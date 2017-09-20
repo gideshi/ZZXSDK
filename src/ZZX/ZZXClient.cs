@@ -85,7 +85,19 @@ namespace ZZX
             }
             ZZXDictionary sysParams = getSystemParams(request);
             string body;
-            var encode = HttpUtility.UrlEncode(JsonConvert.SerializeObject(sysParams));//传递的时候进行url编码
+
+            //这里要组装成对象
+            JObject jb = new JObject();
+            foreach (var key in sysParams.Keys)
+            {
+                //params 这个要转回问题
+                if (key == "params")
+                    jb.Add(new JProperty(key, JsonConvert.DeserializeObject(sysParams[key].ToString())));
+                else
+                    jb.Add(new JProperty(key, sysParams[key]));
+            }
+            var tt = JsonConvert.SerializeObject(jb);
+            var encode = HttpUtility.UrlEncode(tt);//传递的时候进行url编码
             body = _webUtils.DoPost(_serverUrl, encode, _charset);
             string bizResponse = body;
             T rsp = null;
@@ -134,9 +146,13 @@ namespace ZZX
             sysParams.Add(PARAMS, request.GetParams());
             var d = sysParams.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);//签名需要先排序下 中子星文档要求
             // 添加签名参数
+            var build = WebUtils.BuildQuery(d, false, _charset);//  这个签名没问题
             sysParams.Add(SIGN, RSAUtil.Sign(WebUtils.BuildQuery(d, false, _charset), _privateKey, _charset));
             return sysParams;
         }
+
+
+
 
     }
 }

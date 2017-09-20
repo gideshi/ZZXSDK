@@ -177,7 +177,7 @@ namespace ZZXSDK.Tests
                 loanId = tmp_loadId
             };
 
-            request.Params = parms;
+            request.Params = JsonConvert.SerializeObject(parms);
             ZZXApiResponse response = zzxclient.Execute(request);
 
             Assert.AreNotEqual(response.StatusCode, 200);

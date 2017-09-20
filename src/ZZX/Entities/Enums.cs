@@ -8,8 +8,14 @@ namespace ZZX.Entities
 {
     public enum RefundType
     {
-        到期正常还款 = 1,
+        到期还款 = 1,
         提前还款 = 2,
         逾期还款 = 3
+    }
+
+    public enum RefundFlag
+    {
+        已还完完毕=1,
+        未还款完毕=2
     }
 }
