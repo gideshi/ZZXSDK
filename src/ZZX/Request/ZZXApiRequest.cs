@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,41 +9,20 @@ using ZZX.Response;
 
 namespace ZZX.Request
 {
+    [JsonObject]
     public class ZZXApiRequest : IZZXRequest<ZZXApiResponse>
     {
+        [JsonProperty("method")]
         public string Method { get; set; }
-
-        public object Params { get; set; }
-
+        [JsonProperty("ver")]
         public string Ver { get; set; }
-
-        public string GetApiName()
-        {
-            return Method;
-        }
-
-        public object GetParams()
-        {
-            return Params;
-        }
-
-        public void SetApiVersion(string apiVersion)
-        {
-            Ver = apiVersion;
-        }
-
-        public string GetApiVersion()
-        {
-            return Ver;
-        }
-
-        public IDictionary<string, object> GetParameters()
-        {
-            ZZXDictionary parameters = new ZZXDictionary();
-            parameters.Add("params", Params);
-            return parameters;
-        }
-
-
+        [JsonProperty("channelId")]
+        public string ChannelId { get; set; }
+        [JsonProperty("signType")]
+        public string SignType { get; set; }
+        [JsonProperty("sign")]
+        public string Sign { get; set; }
+        [JsonProperty("params")]
+        public JObject Parms { get; set; }
     }
 }
