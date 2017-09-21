@@ -274,7 +274,7 @@ namespace ZZX.Util
                 string name = item.Name;
                 string value = JsonConvert.SerializeObject(item.Value);
                 //我不知道怎么判断去空的问题
-                if (item.HasValues)
+                if (item.HasValues&&item.Value.Type!=JTokenType.Null)
                 {
                    
                     if (hasParam)
