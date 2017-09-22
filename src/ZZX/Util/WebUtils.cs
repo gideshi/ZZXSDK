@@ -259,31 +259,30 @@ namespace ZZX.Util
         }
 
 
-        public static string BuildQueryT<T>(T q, string charset) where T : JObject
+        public static string BuildQueryT(JObject jobject, string charset)
         {
-            return BuildQueryT(q, true, charset);
+            return BuildQueryT(jobject, true, charset);
         }
 
-        public static string BuildQueryT<T>(T jo, bool encode, string charset) where T : JObject
+        public static string BuildQueryT(JObject jobject, bool encode, string charset)
         {
             StringBuilder postData = new StringBuilder();
             bool hasParam = false;
-            IEnumerable<JProperty> properties = jo.Properties();
+            IEnumerable<JProperty> properties = jobject.Properties();
             foreach (JProperty item in properties)
             {
-                string name = item.Name;
-                string value = JsonConvert.SerializeObject(item.Value);
-                //我不知道怎么判断去空的问题
-                if (item.HasValues&&item.Value.Type!=JTokenType.Null)
+                if (item.HasValues && item.Value.Type != JTokenType.Null)
                 {
-                   
+                    string name = item.Name;
+                    //var jSetting = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+                    //string value = JsonConvert.SerializeObject(item.Value, Formatting.None, jSetting);
                     if (hasParam)
                     {
                         postData.Append("&");
                     }
                     postData.Append(name);
                     postData.Append("=");
-                    postData.Append(value);
+                    postData.Append(item.Value);
                     hasParam = true;
                 }
             }
@@ -296,5 +295,11 @@ namespace ZZX.Util
 
             return postData.ToString();
         }
+
+        public static string BuildQueryWithoutEncodeT(JObject jobject)
+        {
+            return BuildQueryT(jobject, false, null);
+        }
+        
     }
 }

@@ -23,6 +23,18 @@ namespace ZZX.Request
         [JsonProperty("sign")]
         public string Sign { get; set; }
         [JsonProperty("params")]
-        public JObject Parms { get; set; }
+        public object Params { get; set; }
+
+        public IDictionary<string, object> GetParameters()
+        {
+            ZZXDictionary parameters = new ZZXDictionary();
+            parameters.Add("method", Method);
+            parameters.Add("ver", Ver);
+            parameters.Add("channelId", ChannelId);
+            parameters.Add("signType", SignType);
+            parameters.Add("sign", Sign);
+            parameters.Add("params", Params);
+            return parameters;
+        }
     }
 }

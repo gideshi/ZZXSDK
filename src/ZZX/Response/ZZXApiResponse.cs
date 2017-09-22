@@ -10,5 +10,6 @@ namespace ZZX.Response
     [JsonObject]
     public class ZZXApiResponse : ZZXResponse
     {
+        public int MyProperty { get; set; }
     }
 }
